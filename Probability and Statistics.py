@@ -3,7 +3,7 @@
 
 # ### Pearson correlation coefficient vs Spearman correlation coefficient
 
-# In[91]:
+# In[310]:
 
 
 import numpy as np
@@ -14,27 +14,27 @@ from scipy import stats
 import random
 
 
-# In[75]:
+# In[311]:
 
 
 x = np.linspace(-1, 1, 21)
 x
 
 
-# In[82]:
+# In[312]:
 
 
 y = x ** 5 + 0.1 * np.random.randn(len(x))
 y
 
 
-# In[83]:
+# In[313]:
 
 
 plt.plot(x, y)
 
 
-# In[84]:
+# In[314]:
 
 
 stats.pearsonr(x, y), stats.spearmanr(x, y)
@@ -42,7 +42,7 @@ stats.pearsonr(x, y), stats.spearmanr(x, y)
 
 # ### Central limit theorem
 
-# In[114]:
+# In[315]:
 
 
 n = 1000
@@ -50,7 +50,7 @@ e = np.random.exponential(size = n)
 sns.displot(e)
 
 
-# In[119]:
+# In[316]:
 
 
 m = 30
@@ -63,7 +63,7 @@ for i in range(1000):
 sns.distplot(sample_means)
 
 
-# In[116]:
+# In[317]:
 
 
 stats.probplot(sample_means, dist = "norm", plot = plt)
@@ -71,7 +71,7 @@ stats.probplot(sample_means, dist = "norm", plot = plt)
 
 # ### Confidence Interval (CI) of a random variable
 
-# In[154]:
+# In[318]:
 
 
 n = 10000
@@ -81,7 +81,7 @@ d = np.random.normal(loc = mean, scale = sigma, size = n)
 sns.distplot(d)
 
 
-# In[159]:
+# In[319]:
 
 
 M = [2, 10, 30, 50, 100, 500]
@@ -96,7 +96,7 @@ for m in M:
 
 # ### CI using empirical bootstrap
 
-# In[183]:
+# In[320]:
 
 
 pop_size = 100000
@@ -109,7 +109,7 @@ print(pop_mean)
 sns.distplot(population)
 
 
-# In[184]:
+# In[321]:
 
 
 n = 200
@@ -117,7 +117,7 @@ sample = random.sample(list(population), n)
 sns.distplot(sample)
 
 
-# In[185]:
+# In[322]:
 
 
 M = [2, 10, 30, 50]
@@ -133,6 +133,57 @@ for m in M:
 
 
 # ### Hypothesis testing
+
+# In[323]:
+
+
+n = 100
+s1 = np.random.uniform(low = 3, high = 5.65, size = n)
+mu1 = np.mean(s1)
+print(mu1)
+s2 = np.random.normal(loc = 4, size = n)
+mu2 = np.mean(s2)
+print(mu2)
+
+
+# In[324]:
+
+
+
+# H0: both s1 and s2 have same mean
+# H1: s1 and s2 does not have same mean
+# test statistic: diff of means
+
+obs = abs(mu1 - mu2)
+
+S = np.concatenate((s1, s2))
+test_stats = []
+k = 1000
+for i in range(k):
+    np.random.shuffle(S)
+    temp_s1, temp_s2 = S[:n], S[n:]
+    test_stats.append(abs(np.mean(temp_s1) - np.mean(temp_s2)))
+
+kwargs = {'cumulative': True}
+sns.distplot(test_stats, hist_kws=kwargs, kde_kws=kwargs)
+plt.grid()
+
+
+# In[325]:
+
+
+# prob = P(test_stats >= obs | H0)
+print(obs)
+prob = np.sum(np.array(test_stats) >= obs)/k
+print(prob)
+
+
+# In[326]:
+
+
+# K-S test
+stats.ks_2samp(s1, s2)
+
 
 # In[ ]:
 
